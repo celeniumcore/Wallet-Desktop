@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="560" viewBox="0 0 1180 560">
+<rect width="1180" height="560" fill="#070A08"/>
+<text x="96" y="60" font-family="Roboto, Liberation Sans, sans-serif" font-size="19" font-weight="700" fill="#F2F4EE" text-anchor="start" letter-spacing="1.1" opacity="1">CEN NAVBAR v2</text>
+<text x="96" y="88" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#828F80" text-anchor="start" letter-spacing="0" opacity="1">Mobile bottom bar, 390 px reference width, five slots, one travelling pill.</text>
+<rect x="95" y="244" width="392" height="128" rx="14" fill="#11170F" stroke="#252E25"/>
+<rect x="96" y="300" width="390" height="72" fill="#0E1310"/>
+<line x1="96" y1="300" x2="486" y2="300" stroke="#252E25"/>
+<rect x="126.0" y="312" width="18" height="12.5" rx="3" fill="none" stroke="#9AA696" stroke-width="1.6"/><circle cx="139.6" cy="318.2" r="1.5" fill="#9AA696"/>
+<text x="135.0" y="350" font-family="Roboto, Liberation Sans, sans-serif" font-size="10" font-weight="500" fill="#9AA696" text-anchor="middle" letter-spacing="0" opacity="1">Dompet</text>
+<path d="M 206.0 319 v 4 a 2 2 0 0 0 2 2 h 10 a 2 2 0 0 0 2 -2 v -4" fill="none" stroke="#9AA696" stroke-width="1.6" stroke-linecap="round"/><path d="M 213.0 320 V 311 M 209.4 314.6 L 213.0 310.8 L 216.6 314.6" fill="none" stroke="#9AA696" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="213.0" y="350" font-family="Roboto, Liberation Sans, sans-serif" font-size="10" font-weight="500" fill="#9AA696" text-anchor="middle" letter-spacing="0" opacity="1">Kirim</text>
+<rect x="267.0" y="308" width="48" height="32" rx="14" fill="#C9D98F" fill-opacity="0.12" stroke="#344034" stroke-opacity="0.55"/>
+<path d="M 284.0 319 v 4 a 2 2 0 0 0 2 2 h 10 a 2 2 0 0 0 2 -2 v -4" fill="none" stroke="#C9D98F" stroke-width="1.6" stroke-linecap="round"/><path d="M 291.0 311 V 320 M 287.4 316.4 L 291.0 320.2 L 294.6 316.4" fill="none" stroke="#C9D98F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="291.0" y="350" font-family="Roboto, Liberation Sans, sans-serif" font-size="10" font-weight="600" fill="#C9D98F" text-anchor="middle" letter-spacing="0" opacity="1">Terima</text>
+<circle cx="369.0" cy="318" r="7.4" fill="none" stroke="#9AA696" stroke-width="1.6"/><path d="M 369.0 313.6 L 369.0 318 L 372.4 320.2" fill="none" stroke="#9AA696" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="369.0" y="350" font-family="Roboto, Liberation Sans, sans-serif" font-size="10" font-weight="500" fill="#9AA696" text-anchor="middle" letter-spacing="0" opacity="1">Riwayat</text>
+<circle cx="447.0" cy="318" r="3.4" fill="none" stroke="#9AA696" stroke-width="1.6"/><circle cx="447.0" cy="318" r="7.2" fill="none" stroke="#9AA696" stroke-width="1.6" stroke-dasharray="2.6 3.4"/>
+<text x="447.0" y="350" font-family="Roboto, Liberation Sans, sans-serif" font-size="10" font-weight="500" fill="#9AA696" text-anchor="middle" letter-spacing="0" opacity="1">Setelan</text>
+<rect x="189.0" y="308" width="48" height="32" rx="14" fill="none" stroke="#C9D98F" stroke-opacity="0.40" stroke-dasharray="4 4"/>
+<text x="540" y="180" font-family="Roboto, Liberation Sans, sans-serif" font-size="11" font-weight="700" fill="#C9D98F" text-anchor="start" letter-spacing="1.0" opacity="1">BAR</text>
+<text x="540" y="204" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">72 px tall, background #0E1310, hairline top</text>
+<text x="540" y="226" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">five equal slots, 78 px each at 390 px width</text>
+<text x="540" y="248" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">each slot is a 72 x 72 target, above the 44 px minimum</text>
+<text x="540" y="270" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">content above reserves 72 px plus safe-area inset</text>
+<text x="540" y="336" font-family="Roboto, Liberation Sans, sans-serif" font-size="11" font-weight="700" fill="#C9D98F" text-anchor="start" letter-spacing="1.0" opacity="1">ACTIVE STATE</text>
+<text x="540" y="360" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">pill 48 x 32 r14, acid 12%, border lineStrong 55%</text>
+<text x="540" y="382" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">icon and label in acid, weight 600</text>
+<text x="540" y="404" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">dashed outline shows where the pill came from</text>
+<text x="540" y="426" font-family="Roboto, Liberation Sans, sans-serif" font-size="12" font-weight="400" fill="#9AA696" text-anchor="start" letter-spacing="0" opacity="1">travel 220 ms, same curve as the rail</text>
+<text x="96" y="500" font-family="Roboto, Liberation Sans, sans-serif" font-size="11" font-weight="400" fill="#828F80" text-anchor="start" letter-spacing="0" opacity="1">Board 2 of 3. Labels in Indonesian, matching the current app strings.</text>
+</svg>

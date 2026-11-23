@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>id.celenium.celenium_wallet</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Proprietary</project_license>
+  <name>Celenium Wallet</name>
+  <summary>Non-custodial wallet for Celenium (CEN)</summary>
+  <developer id="web.celenium">
+    <name>Celenium Labs</name>
+  </developer>
+  <description>
+    <p>
+      Celenium Wallet keeps your CEN keys on your own device and signs transactions
+      locally. Send and receive CEN, track balances, and connect to your own node.
+    </p>
+  </description>
+  <launchable type="desktop-id">CeleniumWallet.desktop</launchable>
+  <url type="homepage">https://celenium.web.id</url>
+  <url type="bugtracker">https://celenium.web.id</url>
+  <content_rating type="oars-1.1"/>
+  <categories>
+    <category>Office</category>
+    <category>Finance</category>
+  </categories>
+  <releases>
+    <release version="1.0.3" date="2026-11-24"/>
+  </releases>
+</component>

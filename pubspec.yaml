@@ -1,0 +1,64 @@
+name: celenium_wallet
+description: CEN Wallet (Desktop, Linux/Windows) - non-custodial wallet for Celenium mainnet.
+publish_to: 'none'
+version: 1.0.3+4
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  pointycastle: ^3.9.1
+  crypto: ^3.0.3
+  http: ^1.2.0
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.1.1
+  path_provider: ^2.1.2
+  url_launcher: ^6.2.5
+  share_plus: ^7.2.1
+  local_auth: ^2.3.0
+  bip39_mnemonic: ^3.0.10
+  flutter_secure_storage: ^9.2.2
+  file_selector: ^1.1.0
+  image: ^4.13.1
+  zxing2: ^0.2.4
+  camera: ^0.12.2
+  camera_windows: ^0.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/wordlists/english.txt
+    - assets/cen_logo.png
+    - assets/cen_logo_circle.png
+    - assets/cen_logo_rounded10.png
+    - assets/user_logo.jpg
+  fonts:
+    - family: Chakra Petch
+      fonts:
+        - asset: assets/fonts/ChakraPetch-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/ChakraPetch-Bold.ttf
+          weight: 700
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-400.ttf
+          weight: 400
+        - asset: assets/fonts/Sora-500.ttf
+          weight: 500
+        - asset: assets/fonts/Sora-600.ttf
+          weight: 600
+    - family: JetBrains Mono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-400.ttf
+          weight: 400
+        - asset: assets/fonts/JetBrainsMono-500.ttf
+          weight: 500
+        - asset: assets/fonts/JetBrainsMono-700.ttf
+          weight: 700

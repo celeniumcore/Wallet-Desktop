@@ -1,0 +1,12 @@
+{
+  "name": "Celenium Wallet",
+  "publisher": "Celenium Labs",
+  "copyright": "Copyright (C) 2026 Celenium Labs. All rights reserved.",
+  "url": "https://celenium.web.id",
+  "app_id": "id.celenium.celenium_wallet",
+  "aumid": "Celenium.Wallet",
+  "exe": "celenium_wallet",
+  "icon": "assets/cen_logo_rounded10.png",
+  "categories": "Office;Finance;",
+  "summary": "Non-custodial wallet for Celenium (CEN)"
+}
