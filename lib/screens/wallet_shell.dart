@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../services/bridge_api_simple.dart';
 import '../services/cen_wallet.dart';
+import '../services/wallet_data.dart';
 import '../strings.dart';
 import '../theme.dart';
 import 'dompet_screen.dart';
@@ -18,10 +19,22 @@ const String _version = 'v1.0.3';
 /// narrow windows. Sign-out lives in Settings, next to the other account-level
 /// actions, so it is not one stray click away while switching pages.
 class WalletShell extends StatefulWidget {
-  const WalletShell({super.key, required this.wallet, required this.onLogout});
+  const WalletShell({
+    super.key,
+    required this.wallet,
+    required this.onLogout,
+    this.api,
+    this.previewData,
+  });
 
   final CenWallet wallet;
   final Future<void> Function() onLogout;
+
+  /// Test seam; the app builds its own bridge client.
+  final BridgeApi? api;
+
+  /// Harness/test fixture for the wallet page; the shipped app leaves it null.
+  final WalletData? previewData;
 
   @override
   State<WalletShell> createState() => _WalletShellState();
@@ -31,10 +44,14 @@ class _WalletShellState extends State<WalletShell> {
   int _index = 0;
   late final BridgeApi _api;
 
+  /// Recipient carried from the wallet page into the send tab. Cleared whenever
+  /// the send tab is opened from navigation, so an old prefill never sticks.
+  String? _kirimRecipient;
+
   @override
   void initState() {
     super.initState();
-    _api = BridgeApi(baseUrl: 'https://celenium.web.id/api');
+    _api = widget.api ?? BridgeApi(baseUrl: 'https://celenium.web.id/api');
   }
 
   @override
@@ -42,12 +59,29 @@ class _WalletShellState extends State<WalletShell> {
     super.dispose();
   }
 
-  void _onTab(int i) => setState(() => _index = i);
+  void _onTab(int i) {
+    setState(() {
+      _index = i;
+      if (i == 1) _kirimRecipient = null;
+    });
+  }
+
+  void _openKirim(String? recipient) {
+    setState(() {
+      _kirimRecipient = recipient;
+      _index = 1;
+    });
+  }
 
   Widget _page(int index) {
     switch (index) {
       case 1:
-        return KirimScreen(wallet: widget.wallet, api: _api);
+        return KirimScreen(
+          key: ValueKey<String?>(_kirimRecipient),
+          wallet: widget.wallet,
+          api: _api,
+          initialRecipient: _kirimRecipient,
+        );
       case 2:
         return TerimaScreen(wallet: widget.wallet);
       case 3:
@@ -60,6 +94,8 @@ class _WalletShellState extends State<WalletShell> {
           wallet: widget.wallet,
           api: _api,
           onOpenTab: _onTab,
+          onSend: _openKirim,
+          previewData: widget.previewData,
         );
     }
   }

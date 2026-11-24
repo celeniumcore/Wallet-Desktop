@@ -9,7 +9,6 @@ import '../strings.dart';
 import '../theme.dart';
 import '../widgets/empty_panel.dart';
 import '../widgets/sparkline_chart.dart';
-import 'kirim_screen.dart';
 
 /// Dashboard. Every number, row, and chart point comes from the node or from
 /// this device's own ledger file — nothing is seeded for the screenshot.
@@ -19,12 +18,17 @@ class DompetScreen extends StatefulWidget {
     required this.wallet,
     required this.api,
     this.onOpenTab,
+    this.onSend,
     this.previewData,
   });
 
   final CenWallet wallet;
   final BridgeApi api;
   final ValueChanged<int>? onOpenTab;
+
+  /// Opens the shell's send tab. Kept as a callback so the wallet page never
+  /// pushes a second copy of the send form.
+  final ValueChanged<String?>? onSend;
 
   /// Harness-only fixture. When set, the page renders this ledger instead of
   /// the on-device file; the shipped app always leaves it null.
@@ -89,7 +93,9 @@ class _DompetScreenState extends State<DompetScreen> {
       }
       final data = _data ?? await WalletDataStore.load(_address);
       final changed = data.observeBalance(balance, DateTime.now());
-      if (changed) await WalletDataStore.save(_address, data);
+      if (changed && widget.previewData == null) {
+        await WalletDataStore.save(_address, data);
+      }
       if (!mounted) return;
       setState(() {
         _data = data;
@@ -112,19 +118,6 @@ class _DompetScreenState extends State<DompetScreen> {
     if (data == null) return;
     await WalletDataStore.save(_address, data);
     if (mounted) setState(() {});
-  }
-
-  Future<void> _openSend(String? recipient) async {
-    await Navigator.of(context).push<void>(
-      MaterialPageRoute<void>(
-        builder: (_) => KirimScreen(
-          wallet: widget.wallet,
-          api: widget.api,
-          initialRecipient: recipient,
-        ),
-      ),
-    );
-    if (mounted) await _refresh();
   }
 
   @override
@@ -375,7 +368,7 @@ class _DompetScreenState extends State<DompetScreen> {
                       _primaryAction(
                         S.kirim,
                         Icons.north_east_rounded,
-                        _nodeOffline || raw == null ? null : () => _openSend(null),
+                        _nodeOffline || raw == null ? null : () => widget.onSend?.call(null),
                       ),
                       const SizedBox(width: 10),
                       _secondaryAction(
@@ -683,7 +676,7 @@ class _DompetScreenState extends State<DompetScreen> {
 
   Widget _addressRow(SavedAddress address) {
     return InkWell(
-      onTap: () => _openSend(address.address),
+      onTap: () => widget.onSend?.call(address.address),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 9),
         child: Row(
@@ -728,7 +721,7 @@ class _DompetScreenState extends State<DompetScreen> {
             ),
             const SizedBox(width: 6),
             IconButton(
-              onPressed: () => _openSend(address.address),
+              onPressed: () => widget.onSend?.call(address.address),
               tooltip: S.kirimKeAlamat,
               visualDensity: VisualDensity.compact,
               padding: EdgeInsets.zero,
