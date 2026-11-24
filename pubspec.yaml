@@ -35,10 +35,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/wordlists/english.txt
-    - assets/cen_logo.png
     - assets/cen_logo_circle.png
     - assets/cen_logo_rounded10.png
-    - assets/user_logo.jpg
   fonts:
     - family: Chakra Petch
       fonts:

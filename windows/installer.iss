@@ -56,6 +56,13 @@ Name: "indonesian"; MessagesFile: "compiler:Languages\Indonesian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
+[InstallDelete]
+; Logo lama yang tidak dipakai lagi — dibersihkan saat upgrade
+Type: files; Name: "{app}\data\flutter_assets\assets\cen_logo.png"
+Type: files; Name: "{app}\data\flutter_assets\assets\cen_logo_temp.jpg"
+Type: files; Name: "{app}\data\flutter_assets\assets\user_logo.jpg"
+Type: filesandordirs; Name: "{app}\data\flutter_assets\assets\icons"
+
 [Files]
 ; Flutter Windows release bundle
 Source: "..\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion

@@ -4,6 +4,7 @@ import '../services/cen_wallet.dart';
 import '../services/wallet_storage.dart';
 import '../strings.dart';
 import '../theme.dart';
+import '../widgets/cen_logo.dart';
 
 /// Lets a user pick a saved wallet or sign in to another one with a recovery
 /// phrase. Wallets stay on the device; this screen only selects which one is
@@ -153,13 +154,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 24),
-                  Center(
-                    child: Image.asset(
-                      'assets/cen_logo_rounded10.png',
-                      width: 72,
-                      height: 72,
-                      filterQuality: FilterQuality.high,
-                    ),
+                  const Center(
+                    child: CenLogo(size: 72),
                   ),
                   const SizedBox(height: 18),
                   Text(

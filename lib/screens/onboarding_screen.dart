@@ -3,6 +3,7 @@ import '../theme.dart';
 import '../strings.dart';
 import '../services/cen_wallet.dart';
 import '../services/wallet_storage.dart';
+import '../widgets/cen_logo.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({
@@ -224,7 +225,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset('assets/cen_logo_circle.png', width: 88, height: 88),
+        CenLogo(size: 88),
         const SizedBox(height: 20),
         const Text(
           'CEN Wallet',

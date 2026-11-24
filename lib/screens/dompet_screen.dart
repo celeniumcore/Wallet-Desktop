@@ -7,6 +7,7 @@ import '../services/cen_wallet.dart';
 import '../services/wallet_data.dart';
 import '../strings.dart';
 import '../theme.dart';
+import '../widgets/cen_logo.dart';
 import '../widgets/empty_panel.dart';
 import '../widgets/sparkline_chart.dart';
 
@@ -291,15 +292,7 @@ class _DompetScreenState extends State<DompetScreen> {
               right: -34,
               bottom: -52,
               child: IgnorePointer(
-                child: Opacity(
-                  opacity: 0.05,
-                  child: Image.asset(
-                    'assets/cen_logo_circle.png',
-                    width: 230,
-                    height: 230,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                child: CenLogo(size: 230, opacity: 0.05),
               ),
             ),
             Positioned(
