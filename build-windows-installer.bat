@@ -26,7 +26,7 @@ if not exist %ISCC% (
 if errorlevel 1 goto :err
 
 echo.
-echo DONE. Installer: installer-out\Celenium-Wallet-Setup-1.0.0.exe
+echo DONE. Installer: installer-out\Celenium-Wallet-Setup-1.0.3.exe
 echo Portable:      build\windows\x64\runner\Release\celenium_wallet.exe
 goto :eof
 
