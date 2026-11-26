@@ -1,10 +1,10 @@
 # Celenium Wallet
 
-![Tampilan dompet Celenium Wallet](screenshots/github/04-dompet.png)
+![Celenium Wallet desktop view](screenshots/github/04-dompet.png)
 
-Celenium Wallet adalah dompet desktop untuk jaringan Celenium (CEN) mainnet. Frasa pemulihan, daftar dompet, dan PIN disimpan di perangkat melalui flutter_secure_storage. Saldo, riwayat transaksi, dan estimasi biaya kirim diperoleh dari bridge di https://celenium.web.id.
+Celenium Wallet is a desktop wallet for the Celenium (CEN) mainnet. Recovery phrases, wallet lists, and the PIN are stored locally with flutter_secure_storage. Balances, transaction history, and send-fee estimates come from the bridge at https://celenium.web.id.
 
-Versi 1.0.3+4, dibangun dengan Flutter 3.47.8 dan Dart 3.13.7.
+Version 1.0.3+4, built with Flutter 3.47.8 and Dart 3.13.7.
 
 ## Fitur
 
