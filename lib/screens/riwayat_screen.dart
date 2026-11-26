@@ -6,6 +6,7 @@ import '../services/cen_wallet.dart';
 import '../services/wallet_data.dart';
 import '../strings.dart';
 import '../theme.dart';
+import '../widgets/cen_logo.dart';
 import '../widgets/empty_panel.dart';
 
 /// Full ledger view. Rows are the same records the dashboard reads from
@@ -61,104 +62,142 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
   Widget build(BuildContext context) {
     final rows = _rows;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final wide = constraints.maxWidth >= 760;
-        return SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(wide ? 26 : 16, wide ? 24 : 18, wide ? 26 : 16, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    S.riwayat,
-                    style: const TextStyle(
-                      color: CenTheme.txt,
-                      fontSize: 21,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                  const Spacer(),
-                  _FilterChips(
-                    value: _filter,
-                    onChanged: (value) => setState(() => _filter = value),
-                  ),
+    final wide = MediaQuery.sizeOf(context).width >= 900;
+    final horizontalPad = wide ? 34.0 : 20.0;
+    final topPad = wide ? 26.0 : 18.0;
+    const bottomPad = 26.0;
+
+    final trackedBody = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          S.alamatTerpantau,
+          style: const TextStyle(
+            color: CenTheme.muted,
+            fontSize: 9.5,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 6),
+        SelectableText(
+          widget.wallet.address,
+          style: const TextStyle(
+            color: CenTheme.sub,
+            fontSize: 10.5,
+            fontFamily: 'monospace',
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          _balance < 0
+              ? S.memuat
+              : '${S.saldoTersedia}: ${formatCen(_balance)} CEN',
+          style: TextStyle(
+            color: _balance < 0 ? CenTheme.muted : CenTheme.green,
+            fontSize: 11.5,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+
+    final activityCard = Container(
+      key: const ValueKey('riwayat-activity-card'),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 8, 18, 12),
+      decoration: BoxDecoration(
+        color: CenTheme.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: CenTheme.line),
+      ),
+      child: rows.isEmpty
+          ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 44),
+              child: EmptyPanel(
+                graphic: const CenLogo(size: 46, opacity: 0.9),
+                title: S.belumAdaAktivitas,
+                center: true,
+              ),
+            )
+          : Column(
+              children: [
+                for (var i = 0; i < rows.length; i++) ...[
+                  if (i > 0) const Divider(height: 1, color: CenTheme.line),
+                  _Row(entry: rows[i]),
                 ],
+              ],
+            ),
+    );
+
+    final header = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (wide)
+          Row(
+            children: [
+              Text(
+                S.riwayat,
+                style: CenTheme.display(24, letterSpacing: -0.2, height: 1.15),
               ),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(18, 8, 18, 12),
-                decoration: BoxDecoration(
-                  color: CenTheme.card,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: CenTheme.line),
-                ),
-                child: rows.isEmpty
-                    ? EmptyPanel(
-                        icon: Icons.receipt_long_outlined,
-                        title: S.belumAdaAktivitas,
-                        body: S.aktivitasKosongBody,
-                        hint: S.aktivitasKosongHint,
-                      )
-                    : Column(
-                        children: [
-                          for (var i = 0; i < rows.length; i++) ...[
-                            if (i > 0) const Divider(height: 1, color: CenTheme.line),
-                            _Row(entry: rows[i]),
-                          ],
-                        ],
-                      ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(18, 14, 18, 16),
-                decoration: BoxDecoration(
-                  color: CenTheme.card,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: CenTheme.line),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      S.alamatTerpantau,
-                      style: const TextStyle(
-                        color: CenTheme.muted,
-                        fontSize: 9.5,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    SelectableText(
-                      widget.wallet.address,
-                      style: const TextStyle(
-                        color: CenTheme.sub,
-                        fontSize: 10.5,
-                        fontFamily: 'monospace',
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _balance < 0
-                          ? S.memuat
-                          : '${S.saldoTersedia}: ${formatCen(_balance)} CEN',
-                      style: TextStyle(
-                        color: _balance < 0 ? CenTheme.muted : CenTheme.green,
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+              const Spacer(),
+              _FilterChips(
+                value: _filter,
+                onChanged: (value) => setState(() => _filter = value),
               ),
             ],
+          )
+        else ...[
+          Text(
+            S.riwayat,
+            style: CenTheme.display(24, letterSpacing: -0.2, height: 1.15),
           ),
-        );
-      },
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerRight,
+            child: _FilterChips(
+              value: _filter,
+              onChanged: (value) => setState(() => _filter = value),
+            ),
+          ),
+        ],
+        const SizedBox(height: 16),
+      ],
+    );
+
+    final trackedAddressCard = Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 16),
+      decoration: BoxDecoration(
+        color: CenTheme.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: CenTheme.line),
+      ),
+      child: trackedBody,
+    );
+
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(
+              horizontalPad, topPad, horizontalPad, bottomPad),
+          sliver: SliverFillRemaining(
+            hasScrollBody: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                header,
+                if (rows.isEmpty)
+                  activityCard
+                else ...[
+                  activityCard,
+                  const SizedBox(height: 12),
+                  trackedAddressCard,
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -193,7 +232,8 @@ class _FilterChips extends StatelessWidget {
               onTap: () => onChanged(entry.key),
               behavior: HitTestBehavior.opaque,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
                 decoration: BoxDecoration(
                   color: value == entry.key
                       ? CenTheme.acid.withValues(alpha: 0.14)
@@ -225,8 +265,9 @@ class _Row extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = entry.incoming ? CenTheme.green : CenTheme.red;
     final counterparty = entry.counterparty;
-    final counterpartyLabel =
-        counterparty == null ? S.mainnetAlamatAktif : shortAddress(counterparty);
+    final counterpartyLabel = counterparty == null
+        ? S.mainnetAlamatAktif
+        : shortAddress(counterparty);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 11),
@@ -241,7 +282,9 @@ class _Row extends StatelessWidget {
               border: Border.all(color: color.withValues(alpha: 0.22)),
             ),
             child: Icon(
-              entry.incoming ? Icons.south_west_rounded : Icons.north_east_rounded,
+              entry.incoming
+                  ? Icons.south_west_rounded
+                  : Icons.north_east_rounded,
               size: 15,
               color: color,
             ),
@@ -282,13 +325,23 @@ class _Row extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Text(
-            formatSignedCen(entry.amountPradha, incoming: entry.incoming),
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                formatSignedCen(entry.amountPradha, incoming: entry.incoming),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                formatRelativeTime(entry.time),
+                style: CenTheme.mono(10.5, color: CenTheme.muted),
+              ),
+            ],
           ),
         ],
       ),

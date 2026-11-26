@@ -132,7 +132,12 @@ class _HarnessAppState extends State<_HarnessApp> {
       }),
       _Shot('14_mobile_dompet', () {
         S.setLocale('id');
-        return WalletShell(wallet: _wallet, onLogout: () async {});
+        return WalletShell(
+          wallet: _wallet,
+          onLogout: () async {},
+          api: _PreviewApi(),
+          previewData: _previewData(),
+        );
       }, wait: const Duration(seconds: 5), size: const Size(390, 844)),
     _Shot('20_menu_desktop', () {
         S.setLocale('id');
@@ -140,7 +145,13 @@ class _HarnessAppState extends State<_HarnessApp> {
       }, wait: const Duration(seconds: 13)),
       _Shot('21_dompet_desktop', () {
         S.setLocale('id');
-        return _Frame(child: DompetScreen(wallet: _wallet, api: _api));
+        return _Frame(
+          child: DompetScreen(
+            wallet: _wallet,
+            api: _PreviewApi(),
+            previewData: _previewData(),
+          ),
+        );
       }, wait: const Duration(seconds: 13)),
       _Shot('22_dompet_en', () {
         S.setLocale('en');
@@ -149,6 +160,68 @@ class _HarnessAppState extends State<_HarnessApp> {
       // Design preview only: fixed balance, ledger and saved addresses so the
       // populated layout can be reviewed while the public node is unreachable.
       // Nothing here is used by the shipped app.
+      _Shot('26_dompet_add_address', () {
+        S.setLocale('id');
+        return _Frame(
+          child: DompetScreen(
+            wallet: _wallet,
+            api: _PreviewApi(),
+            previewData: _previewData(),
+            previewDialog: 'add',
+          ),
+        );
+      }, wait: const Duration(seconds: 3)),
+      _Shot('27_dompet_delete_address', () {
+        S.setLocale('id');
+        return _Frame(
+          child: DompetScreen(
+            wallet: _wallet,
+            api: _PreviewApi(),
+            previewData: _previewData(),
+            previewDialog: 'delete',
+          ),
+        );
+      }, wait: const Duration(seconds: 3)),
+      _Shot('28_setelan_seed', () {
+        S.setLocale('id');
+        return _Frame(
+          child: SetelanScreen(
+            wallet: _wallet,
+            onLogout: () async {},
+            previewDialog: 'seed',
+          ),
+        );
+      }, wait: const Duration(seconds: 3)),
+      _Shot('29_setelan_pin', () {
+        S.setLocale('id');
+        return _Frame(
+          child: SetelanScreen(
+            wallet: _wallet,
+            onLogout: () async {},
+            previewDialog: 'pin',
+          ),
+        );
+      }, wait: const Duration(seconds: 3)),
+      _Shot('30_setelan_hapus_pin', () {
+        S.setLocale('id');
+        return _Frame(
+          child: SetelanScreen(
+            wallet: _wallet,
+            onLogout: () async {},
+            previewDialog: 'hapus_pin',
+          ),
+        );
+      }, wait: const Duration(seconds: 3)),
+      _Shot('31_setelan_logout', () {
+        S.setLocale('id');
+        return _Frame(
+          child: SetelanScreen(
+            wallet: _wallet,
+            onLogout: () async {},
+            previewDialog: 'logout',
+          ),
+        );
+      }, wait: const Duration(seconds: 3)),
       _Shot('23_dompet_preview', () {
         S.setLocale('id');
         return _Frame(

@@ -7,9 +7,17 @@ import '../services/wallet_storage.dart';
 import '../services/biometric_service.dart';
 
 class SetelanScreen extends StatefulWidget {
-  const SetelanScreen({super.key, required this.wallet, required this.onLogout});
+  const SetelanScreen({
+    super.key,
+    required this.wallet,
+    required this.onLogout,
+    this.previewDialog,
+  });
   final CenWallet wallet;
   final Future<void> Function() onLogout;
+
+  /// Harness-only: opens a dialog on first frame for screenshot coverage.
+  final String? previewDialog;
 
   @override
   State<SetelanScreen> createState() => _SetelanScreenState();
@@ -25,6 +33,25 @@ class _SetelanScreenState extends State<SetelanScreen> {
   void initState() {
     super.initState();
     _loadSecurity();
+    if (widget.previewDialog != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Future<void>.delayed(const Duration(milliseconds: 600));
+        if (!mounted) return;
+        switch (widget.previewDialog) {
+          case 'seed':
+            _showSeed(
+              'abandon abandon abandon abandon abandon abandon abandon '
+              'abandon abandon abandon abandon about',
+            );
+          case 'pin':
+            await _setPin();
+          case 'hapus_pin':
+            await _removePin();
+          case 'logout':
+            await _confirmLogout();
+        }
+      });
+    }
   }
 
   Future<void> _loadSecurity() async {
@@ -40,8 +67,8 @@ class _SetelanScreenState extends State<SetelanScreen> {
     });
   }
 
-  void _showSeed() async {
-    final mnemonic = await WalletStorage.loadMnemonic();
+  void _showSeed([String? previewMnemonic]) async {
+    final mnemonic = previewMnemonic ?? await WalletStorage.loadMnemonic();
     if (!mounted) return;
     showDialog(
       context: context,
@@ -304,17 +331,20 @@ class _SetelanScreenState extends State<SetelanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            S.setelan,
-            style: const TextStyle(
-                fontSize: 22, fontWeight: FontWeight.w700, color: CenTheme.txt),
-          ),
-          const SizedBox(height: 20),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= 900;
+        final pad = wide ? 28.0 : 20.0;
+        return SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(pad, wide ? 26 : 18, pad, 26),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                S.setelan,
+                style: CenTheme.display(24, letterSpacing: -0.2, height: 1.15),
+              ),
+              SizedBox(height: wide ? 20 : 16),
           _card([
             _sectionLabel(S.dompet),
             _row(
@@ -495,8 +525,10 @@ class _SetelanScreenState extends State<SetelanScreen> {
             _row(S.jaringan, 'CEN mainnet', trailing: const SizedBox.shrink()),
           ]),
           const SizedBox(height: 30),
-        ],
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 

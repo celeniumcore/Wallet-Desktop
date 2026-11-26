@@ -8,15 +8,18 @@ import '../theme.dart';
 class EmptyPanel extends StatelessWidget {
   const EmptyPanel({
     super.key,
-    required this.icon,
+    this.icon,
+    this.graphic,
     required this.title,
     this.body,
     this.hint,
     this.center = false,
     this.justifyBody = false,
-  });
+  }) : assert(icon != null || graphic != null,
+            'EmptyPanel needs an icon or a graphic');
 
-  final IconData icon;
+  final IconData? icon;
+  final Widget? graphic;
   final String title;
   final String? body;
   final String? hint;
@@ -35,16 +38,19 @@ class EmptyPanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: CenTheme.acid.withValues(alpha: 0.07),
-              borderRadius: BorderRadius.circular(13),
-              border: Border.all(color: CenTheme.acid.withValues(alpha: 0.16)),
-            ),
-            child: Icon(icon, size: 21, color: CenTheme.acid.withValues(alpha: 0.85)),
-          ),
+          graphic ??
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: CenTheme.acid.withValues(alpha: 0.07),
+                  borderRadius: BorderRadius.circular(13),
+                  border:
+                      Border.all(color: CenTheme.acid.withValues(alpha: 0.16)),
+                ),
+                child: Icon(icon!,
+                    size: 21, color: CenTheme.acid.withValues(alpha: 0.85)),
+              ),
           const SizedBox(height: 14),
           Text(
             title,
@@ -95,16 +101,19 @@ class EmptyPanel extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: CenTheme.acid.withValues(alpha: 0.07),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: CenTheme.acid.withValues(alpha: 0.16)),
-            ),
-            child: Icon(icon, size: 19, color: CenTheme.acid.withValues(alpha: 0.85)),
-          ),
+          graphic ??
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: CenTheme.acid.withValues(alpha: 0.07),
+                  borderRadius: BorderRadius.circular(12),
+                  border:
+                      Border.all(color: CenTheme.acid.withValues(alpha: 0.16)),
+                ),
+                child: Icon(icon!,
+                    size: 19, color: CenTheme.acid.withValues(alpha: 0.85)),
+              ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(

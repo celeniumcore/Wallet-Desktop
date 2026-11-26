@@ -50,6 +50,8 @@ void main() {
       expect(tester.takeException(), isNull, reason: 'wallet overflow at $size');
 
       final send = find.widgetWithText(FilledButton, S.kirim).first;
+      await tester.ensureVisible(send);
+      await tester.pump();
       await tester.tap(send);
       await tester.pump(const Duration(milliseconds: 50));
       expect(find.byType(KirimScreen), findsOneWidget);

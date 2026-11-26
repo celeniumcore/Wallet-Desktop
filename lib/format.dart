@@ -49,6 +49,13 @@ String shortAddress(String address) {
   return '$prefix:${body.substring(0, 4)}…${body.substring(body.length - 4)}';
 }
 
+/// `4f2a9c…d81b` — txids have no readable prefix, so keep both ends.
+String shortHash(String hash, {int left = 8, int right = 6}) {
+  final trimmed = hash.trim();
+  if (trimmed.length <= left + right + 1) return trimmed;
+  return '${trimmed.substring(0, left)}…${trimmed.substring(trimmed.length - right)}';
+}
+
 const List<String> _monthsId = <String>[
   'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des',
 ];
@@ -58,6 +65,28 @@ const List<String> _monthsEn = <String>[
 ];
 
 String _month(int month) => (S.isId ? _monthsId : _monthsEn)[month - 1];
+
+/// Compact relative-ish stamp for ledger rows: `Min, 23 Nov · 14.20`.
+///
+/// Includes weekday and month so scanned history stays readable without opening
+/// a row. Kept to one line to avoid vertical overflow in dense lists.
+String formatRelativeTime(DateTime time, {DateTime? now}) {
+  final clock = '${_two(time.hour)}${S.isId ? '.' : ':'}${_two(time.minute)}';
+  final dayShort = (S.isId ? _daysIdShort : _daysEnShort)[time.weekday - 1];
+  final monthShort = _month(time.month);
+  final ref = now ?? DateTime.now();
+  final sameYear = time.year == ref.year;
+  final year = sameYear ? '' : ' ${time.year}';
+  return '$dayShort, ${time.day} $monthShort$year · $clock';
+}
+
+const List<String> _daysIdShort = <String>[
+  'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min',
+];
+
+const List<String> _daysEnShort = <String>[
+  'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
+];
 
 /// `20 Nov · 02.41` (id) or `20 Nov · 02:41` (en).
 String formatStamp(DateTime time) {

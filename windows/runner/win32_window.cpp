@@ -197,6 +197,24 @@ Win32Window::MessageHandler(HWND hwnd,
 
       return 0;
     }
+    case WM_GETMINMAXINFO: {
+      // Constrain maximized size to the monitor work area. Without this,
+      // WS_OVERLAPPEDWINDOW can extend slightly off-screen on maximized/
+      // fullscreen transitions, clipping content on the left edge.
+      auto* info = reinterpret_cast<MINMAXINFO*>(lparam);
+      HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+      if (monitor) {
+        MONITORINFO mi;
+        mi.cbSize = sizeof(mi);
+        if (GetMonitorInfo(monitor, &mi)) {
+          info->ptMaxPosition.x = mi.rcWork.left - mi.rcMonitor.left;
+          info->ptMaxPosition.y = mi.rcWork.top - mi.rcMonitor.top;
+          info->ptMaxSize.x = mi.rcWork.right - mi.rcWork.left;
+          info->ptMaxSize.y = mi.rcWork.bottom - mi.rcWork.top;
+        }
+      }
+      return 0;
+    }
     case WM_SIZE: {
       RECT rect = GetClientArea();
       if (child_content_ != nullptr) {

@@ -21,6 +21,7 @@ class DompetScreen extends StatefulWidget {
     this.onOpenTab,
     this.onSend,
     this.previewData,
+    this.previewDialog,
   });
 
   final CenWallet wallet;
@@ -34,6 +35,9 @@ class DompetScreen extends StatefulWidget {
   /// Harness-only fixture. When set, the page renders this ledger instead of
   /// the on-device file; the shipped app always leaves it null.
   final WalletData? previewData;
+
+  /// Harness-only: opens a dialog on first frame for screenshot coverage.
+  final String? previewDialog;
 
   @override
   State<DompetScreen> createState() => _DompetScreenState();
@@ -59,6 +63,24 @@ class _DompetScreenState extends State<DompetScreen> {
     super.initState();
     _boot();
     _poll = Timer.periodic(const Duration(seconds: 15), (_) => _refresh());
+    if (widget.previewDialog != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        if (!mounted) return;
+        if (widget.previewDialog == 'add') {
+          await _addAddress();
+        } else if (widget.previewDialog == 'delete') {
+          await _removeAddress(
+            SavedAddress(
+              id: 'preview',
+              label: 'Kantor',
+              address: 'cen69:qz4m7n0b3v6c9x2z5l8k1j4h7g0f3d6s9a2p5o8i1u4y7t0r3e6w9q2z5x8c1v4b7n0m3k6j',
+              createdAt: DateTime.now(),
+            ),
+          );
+        }
+      });
+    }
   }
 
   @override
