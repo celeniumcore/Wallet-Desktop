@@ -106,34 +106,49 @@ class _DompetScreenState extends State<DompetScreen> {
   }
 
   Future<void> _refresh() async {
+    // Only the balance read decides whether the node is reachable. Fee and
+    // local ledger failures are reported elsewhere; folding them into the
+    // offline flag made a healthy node look disconnected.
+    int balance;
     try {
-      final balance = await widget.api.fetchBalance(_address);
-      int? fee;
-      try {
-        fee = await widget.api.fetchFee();
-      } catch (_) {
-        fee = null;
-      }
-      final data = _data ?? await WalletDataStore.load(_address);
-      final changed = data.observeBalance(balance, DateTime.now());
-      if (changed && widget.previewData == null) {
-        await WalletDataStore.save(_address, data);
-      }
-      if (!mounted) return;
-      setState(() {
-        _data = data;
-        _balance = balance;
-        _nodeOffline = false;
-        _loading = false;
-        if (fee != null) _feePradha = fee;
-      });
+      balance = await widget.api.fetchBalance(_address);
     } catch (_) {
       if (!mounted) return;
       setState(() {
         _nodeOffline = true;
         _loading = false;
       });
+      return;
     }
+
+    int? fee;
+    try {
+      fee = await widget.api.fetchFee();
+    } catch (_) {
+      fee = null;
+    }
+
+    WalletData? data;
+    try {
+      data = _data ?? await WalletDataStore.load(_address);
+      final changed = data.observeBalance(balance, DateTime.now());
+      if (changed && widget.previewData == null) {
+        await WalletDataStore.save(_address, data);
+      }
+    } catch (_) {
+      // Disk error: the balance we just read is still valid, so keep showing
+      // it and leave the node marked up.
+      data = null;
+    }
+
+    if (!mounted) return;
+    setState(() {
+      if (data != null) _data = data;
+      _balance = balance;
+      _nodeOffline = false;
+      _loading = false;
+      if (fee != null) _feePradha = fee;
+    });
   }
 
   Future<void> _save() async {
