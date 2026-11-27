@@ -67,7 +67,7 @@ IDI_APP_ICON            ICON                    "resources\\app_icon.ico"
 #endif
 
 // Ditetapkan tool/build_meta.py — versi tampil tanpa build number.
-#define VERSION_AS_STRING "1.0.3"
+#define VERSION_AS_STRING "1.0.5"
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION VERSION_AS_NUMBER

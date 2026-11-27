@@ -4,7 +4,7 @@
 
 Celenium Wallet is a desktop wallet for the Celenium (CEN) mainnet. Recovery phrases, wallet lists, and the PIN are stored locally with flutter_secure_storage. Balances, transaction history, and send-fee estimates come from the bridge at https://celenium.web.id.
 
-Version 1.0.3+4, built with Flutter 3.47.8 and Dart 3.13.7.
+Version 1.0.5+6, built with Flutter 3.47.8 and Dart 3.13.7.
 
 ## Fitur
 
@@ -48,7 +48,7 @@ Untuk menghasilkan installer:
 .\build-windows-installer.bat
 ```
 
-Skrip menjalankan `flutter clean`, `flutter pub get`, `flutter build windows --release`, lalu Inno Setup. Installer disimpan di `installer-out\Celenium-Wallet-Setup-1.0.3.exe`.
+Skrip menjalankan `flutter clean`, `flutter pub get`, `flutter build windows --release`, lalu Inno Setup. Installer disimpan di `installer-out\Celenium-Wallet-Setup-1.0.5.exe`.
 
 Skrip mengasumsikan Flutter berada di `C:\flutter\bin\flutter.bat`. Jika lokasinya berbeda, sesuaikan jalur tersebut atau jalankan tahapnya satu per satu:
 

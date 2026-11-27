@@ -222,6 +222,14 @@ class _HarnessAppState extends State<_HarnessApp> {
           ),
         );
       }, wait: const Duration(seconds: 3)),
+      _Shot('32_terima_shell', () {
+        S.setLocale('id');
+        return WalletShell(
+          wallet: _wallet,
+          onLogout: () async {},
+          initialIndex: 2,
+        );
+      }, wait: const Duration(seconds: 6), size: const Size(1440, 900)),
       _Shot('23_dompet_preview', () {
         S.setLocale('id');
         return _Frame(
@@ -237,9 +245,15 @@ class _HarnessAppState extends State<_HarnessApp> {
   }
 
   Future<void> _run() async {
+    final only = Platform.environment['SHOT'];
+    print('SHOT_RUN start total=${_shots.length} only=$only');
     for (var i = 0; i < _shots.length; i++) {
+      if (only != null && only.isNotEmpty && !_shots[i].name.contains(only)) {
+        continue;
+      }
       setState(() => _index = i);
       await Future<void>.delayed(_shots[i].wait);
+      print('SHOT_READY ${_shots[i].name}');
       await _capture(_shots[i].name);
     }
     await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -248,7 +262,10 @@ class _HarnessAppState extends State<_HarnessApp> {
 
   Future<void> _capture(String name) async {
     final obj = _boundary.currentContext?.findRenderObject();
-    if (obj is! RenderRepaintBoundary) return;
+    if (obj is! RenderRepaintBoundary) {
+      print('SHOT_MISS $name');
+      return;
+    }
     final image = await obj.toImage(pixelRatio: 2);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     if (bytes == null) return;

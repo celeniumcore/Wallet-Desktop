@@ -9,7 +9,7 @@
 ;   ISCC.exe windows\installer.iss
 
 #define MyAppName "Celenium Wallet"
-#define MyAppVersion "1.0.3"
+#define MyAppVersion "1.0.5"
 #define MyAppPublisher "Celenium Labs"
 #define MyAppURL "https://celenium.web.id"
 #define MyAppExeName "celenium_wallet.exe"
@@ -40,7 +40,7 @@ WizardStyle=modern
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription={#MyAppName} Setup
 VersionInfoProductName={#MyAppName}
-VersionInfoVersion=1.0.3.4
+VersionInfoVersion=1.0.5.6
 VersionInfoCopyright=Copyright (C) 2026 Celenium Labs. All rights reserved.
 ArchitecturesInstallIn64BitMode=x64compatible
 ArchitecturesAllowed=x64compatible

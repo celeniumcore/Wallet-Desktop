@@ -3,9 +3,29 @@
 #include <dwmapi.h>
 #include <flutter_windows.h>
 
+#include <vector>
+
 #include "resource.h"
 
 namespace {
+
+/// Fully transparent icon. The window keeps the app icon on the taskbar (it
+/// comes from the executable), but the caption bar no longer paints a logo.
+HICON MakeBlankCaptionIcon(int size) {
+  std::vector<unsigned char> color(static_cast<size_t>(size) * size * 4, 0);
+  const int mask_stride = ((size + 15) / 16) * 2;
+  std::vector<unsigned char> mask(static_cast<size_t>(mask_stride) * size, 0xFF);
+  HBITMAP color_bitmap = CreateBitmap(size, size, 1, 32, color.data());
+  HBITMAP mask_bitmap = CreateBitmap(size, size, 1, 1, mask.data());
+  ICONINFO info = {};
+  info.fIcon = TRUE;
+  info.hbmMask = mask_bitmap;
+  info.hbmColor = color_bitmap;
+  HICON icon = CreateIconIndirect(&info);
+  DeleteObject(color_bitmap);
+  DeleteObject(mask_bitmap);
+  return icon;
+}
 
 /// Window attribute that enables dark mode window decorations.
 ///
@@ -95,8 +115,9 @@ const wchar_t* WindowClassRegistrar::GetWindowClass() {
     window_class.cbClsExtra = 0;
     window_class.cbWndExtra = 0;
     window_class.hInstance = GetModuleHandle(nullptr);
-    window_class.hIcon =
-        LoadIcon(window_class.hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
+    // No window icon: keeps the caption bar free of a logo (the wallet draws
+    // its own branding inside the window).
+    window_class.hIcon = nullptr;
     window_class.hbrBackground = 0;
     window_class.lpszMenuName = nullptr;
     window_class.lpfnWndProc = Win32Window::WndProc;
@@ -145,12 +166,17 @@ bool Win32Window::Create(const std::wstring& title,
   }
 
   UpdateTheme(window);
+  ApplyBlackTitleBar(window);
+  ApplyBlankCaptionIcon(window);
 
   return OnCreate();
 }
 
 bool Win32Window::Show() {
-  return ShowWindow(window_handle_, SW_SHOWNORMAL);
+  // The Flutter engine calls this once the first frame is ready, which is later
+  // than the ShowWindow call in main(). Opening maximised here keeps the window
+  // filling the screen instead of dropping back to the 1280x720 default.
+  return ShowWindow(window_handle_, SW_MAXIMIZE);
 }
 
 // static
@@ -303,4 +329,47 @@ void Win32Window::UpdateTheme(HWND const window) {
     DwmSetWindowAttribute(window, DWMWA_USE_IMMERSIVE_DARK_MODE,
                           &enable_dark_mode, sizeof(enable_dark_mode));
   }
+}
+
+// Pins the native title bar to the app's black chrome instead of inheriting the
+// desktop accent or light theme. Attributes 34-36 exist only on Windows 11;
+// every call is allowed to fail so Windows 10 keeps the plain dark bar.
+void Win32Window::ApplyBlackTitleBar(HWND const window) {
+#ifndef DWMWA_BORDER_COLOR
+#define DWMWA_BORDER_COLOR 34
+#endif
+#ifndef DWMWA_CAPTION_COLOR
+#define DWMWA_CAPTION_COLOR 35
+#endif
+#ifndef DWMWA_TEXT_COLOR
+#define DWMWA_TEXT_COLOR 36
+#endif
+#ifndef DWMWA_USE_IMMERSIVE_DARK_MODE
+#define DWMWA_USE_IMMERSIVE_DARK_MODE 20
+#endif
+
+  BOOL dark = TRUE;
+  if (FAILED(DwmSetWindowAttribute(window, DWMWA_USE_IMMERSIVE_DARK_MODE, &dark,
+                                   sizeof(dark)))) {
+    // Pre-20H1 attribute id; harmless no-op on newer builds.
+    const DWORD legacy_dark_mode = 19;
+    DwmSetWindowAttribute(window, legacy_dark_mode, &dark, sizeof(dark));
+  }
+
+  const COLORREF black = RGB(0, 0, 0);
+  const COLORREF label = RGB(240, 244, 248);
+  DwmSetWindowAttribute(window, DWMWA_CAPTION_COLOR, &black, sizeof(black));
+  DwmSetWindowAttribute(window, DWMWA_TEXT_COLOR, &label, sizeof(label));
+  DwmSetWindowAttribute(window, DWMWA_BORDER_COLOR, &black, sizeof(black));
+}
+
+// Drops the icon glyph from the caption bar. Sending a transparent icon keeps
+// the title bar layout stable while removing the logo the user asked to hide.
+void Win32Window::ApplyBlankCaptionIcon(HWND const window) {
+  static HICON small_icon = MakeBlankCaptionIcon(16);
+  static HICON large_icon = MakeBlankCaptionIcon(32);
+  SendMessage(window, WM_SETICON, ICON_SMALL,
+              reinterpret_cast<LPARAM>(small_icon));
+  SendMessage(window, WM_SETICON, ICON_BIG,
+              reinterpret_cast<LPARAM>(large_icon));
 }

@@ -25,6 +25,7 @@ class WalletShell extends StatefulWidget {
     required this.onLogout,
     this.api,
     this.previewData,
+    this.initialIndex = 0,
   });
 
   final CenWallet wallet;
@@ -36,12 +37,16 @@ class WalletShell extends StatefulWidget {
   /// Harness/test fixture for the wallet page; the shipped app leaves it null.
   final WalletData? previewData;
 
+  /// Harness/test seam so a screenshot can open on a given tab. The app
+  /// always starts on the wallet page.
+  final int initialIndex;
+
   @override
   State<WalletShell> createState() => _WalletShellState();
 }
 
 class _WalletShellState extends State<WalletShell> {
-  int _index = 0;
+  late int _index = widget.initialIndex;
   late final BridgeApi _api;
 
   /// Recipient carried from the wallet page into the send tab. Cleared whenever
@@ -162,13 +167,14 @@ class _Sidebar extends StatelessWidget {
         border: Border(right: BorderSide(color: CenTheme.line)),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 20, 14, 16),
+        padding: const EdgeInsets.fromLTRB(14, 26, 14, 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -181,23 +187,28 @@ class _Sidebar extends StatelessWidget {
                   ),
                   const SizedBox(width: 11),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          S.appName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: CenTheme.display(16, letterSpacing: 0.2),
-                        ),
-                        const SizedBox(height: 1),
-                        Text(
-                          S.nonKustodial,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: CenTheme.body(10.5, color: CenTheme.muted),
-                        ),
-                      ],
+                    child: Padding(
+                      // 5 px drops the 16 px brand baseline onto the 24 px
+                      // page heading's baseline (7 sat 2 px low, measured).
+                      padding: const EdgeInsets.only(top: 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            S.appName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: CenTheme.display(16, letterSpacing: 0.2),
+                          ),
+                          const SizedBox(height: 1),
+                          Text(
+                            S.nonKustodial,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: CenTheme.body(10.5, color: CenTheme.muted),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

@@ -14,63 +14,73 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
-// Called when first Flutter frame received.
-static void first_frame_cb(MyApplication* self, FlView* view) {
-  gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
+// The header bar inherits the desktop theme, so on a light theme the window
+// opens with a pale strip above a black app. Repaint just the chrome black to
+// match the shell; the page itself is drawn by Flutter.
+static void apply_black_header_bar_css() {
+  GtkCssProvider* provider = gtk_css_provider_new();
+  gtk_css_provider_load_from_data(
+      provider,
+      "headerbar, .titlebar {"
+      "  background-image: none;"
+      "  background-color: #000000;"
+      "  box-shadow: none;"
+      "  border-bottom: 1px solid #1b1e23;"
+      "}"
+      "headerbar label, headerbar .title { color: #f2f4f8; }"
+      "headerbar button { color: #f2f4f8; background: transparent;"
+      "  border-color: transparent; box-shadow: none; }",
+      -1, nullptr);
+  gtk_style_context_add_provider_for_screen(
+      gdk_screen_get_default(), GTK_STYLE_PROVIDER(provider),
+      GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  g_object_unref(provider);
 }
 
-// The X11 window carries no icon unless one is supplied explicitly; without it
-// taskbars show a generic placeholder before desktop integration happens.
-// Icon lives next to the bundle so the AppImage stays self-contained.
-static void set_window_icon_from_bundle(GtkWindow* window) {
-  g_autofree gchar* exe = g_file_read_link("/proc/self/exe", nullptr);
-  if (exe == nullptr) {
-    return;
+// Called when first Flutter frame received.
+static void first_frame_cb(MyApplication* self, FlView* view) {
+  GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(view));
+  gtk_widget_show(toplevel);
+}
+
+// Re-ask for the maximised state once the window manager has actually mapped
+// the window. A maximise request sent before the window is managed is dropped
+// by most WMs, which leaves the app at its default 1280x900 size.
+static gboolean on_window_map_event(GtkWidget* widget, GdkEvent* event,
+                                    gpointer user_data) {
+  if (GTK_IS_WINDOW(widget)) {
+    gtk_window_maximize(GTK_WINDOW(widget));
   }
-  g_autofree gchar* dir = g_path_get_dirname(exe);
-  g_autofree gchar* path =
-      g_build_filename(dir, "data", "celenium_wallet.png", nullptr);
-  if (g_file_test(path, G_FILE_TEST_EXISTS)) {
-    gtk_window_set_icon_from_file(window, path, nullptr);
-  }
+  return FALSE;
 }
 
 // Implements GApplication::activate.
 static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
+  apply_black_header_bar_css();
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
 
-  // Use a header bar when running in GNOME as this is the common style used
-  // by applications and is the setup most users will be using (e.g. Ubuntu
-  // desktop).
-  // If running on X and not using GNOME then just use a traditional title bar
-  // in case the window manager does more exotic layout, e.g. tiling.
-  // If running on Wayland assume the header bar will work (may need changing
-  // if future cases occur).
+  // Always use client-side decorations so the chrome is the app's own black
+  // header bar. With server-side decorations the window manager paints the
+  // title in the desktop theme, which on a light theme is a pale strip above
+  // an otherwise black app. Tiling WMs honour the CSD header bar as well.
   gboolean use_header_bar = TRUE;
-#ifdef GDK_WINDOWING_X11
-  GdkScreen* screen = gtk_window_get_screen(window);
-  if (GDK_IS_X11_SCREEN(screen)) {
-    const gchar* wm_name = gdk_x11_screen_get_window_manager_name(screen);
-    if (g_strcmp0(wm_name, "GNOME Shell") != 0) {
-      use_header_bar = FALSE;
-    }
-  }
-#endif
   if (use_header_bar) {
     GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
     gtk_widget_show(GTK_WIDGET(header_bar));
-    gtk_header_bar_set_title(header_bar, "Celenium Wallet");
+    // OS-level title so taskbars, Alt-Tab and screen readers get a name;
+    // the in-app header still carries the full identity.
+    gtk_header_bar_set_title(header_bar, "CEN Wallet");
     gtk_header_bar_set_show_close_button(header_bar, TRUE);
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
   } else {
-    gtk_window_set_title(window, "Celenium Wallet");
+    gtk_window_set_title(window, "CEN Wallet");
   }
-  gtk_window_set_icon_name(window, "CeleniumWallet");
-  set_window_icon_from_bundle(window);
 
-  gtk_window_set_default_size(window, 1280, 1500);
+  gtk_window_set_default_size(window, 1280, 900);
+  gtk_window_maximize(window);
+  g_signal_connect(window, "map-event", G_CALLBACK(on_window_map_event), nullptr);
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(

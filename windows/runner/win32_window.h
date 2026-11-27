@@ -89,6 +89,8 @@ class Win32Window {
 
   // Update the window frame's theme to match the system theme.
   static void UpdateTheme(HWND const window);
+  static void ApplyBlackTitleBar(HWND const window);
+  static void ApplyBlankCaptionIcon(HWND const window);
 
   bool quit_on_close_ = false;
 
