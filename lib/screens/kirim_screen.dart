@@ -36,6 +36,9 @@ class _KirimScreenState extends State<KirimScreen> {
   String? _status;
   bool _success = false;
 
+  /// Mirrors the bridge's anti-dust floor; the server rejects lower amounts.
+  static const int _minTransferPradha = 1000;
+
   int? _feePradha;
   bool _feeLoading = true;
   bool _feeFailed = false;
@@ -151,6 +154,14 @@ class _KirimScreenState extends State<KirimScreen> {
       });
       return;
     }
+    final pradha = (amount * pradhaPerCen).round();
+    if (pradha < _minTransferPradha) {
+      setState(() {
+        _status = S.minimalKirim;
+        _success = false;
+      });
+      return;
+    }
 
     final authorized = await _authorize();
     if (!authorized) {
@@ -167,29 +178,31 @@ class _KirimScreenState extends State<KirimScreen> {
       _status = null;
     });
     try {
-      final pradha = (amount * 100000000).round();
-      final fee = await widget.api.fetchFee();
-      final txid = await widget.api.sendCoins(
+      final result = await widget.api.sendCoins(
         from: widget.wallet.address,
         to: addr,
         amountPradha: pradha,
-        feePradha: fee,
         privateKeyHex: widget.wallet.privateKeyHex,
       );
-      final data = await WalletDataStore.load(widget.wallet.address);
-      final changed = data.recordSend(
-        to: addr,
-        amountPradha: pradha,
-        feePradha: fee,
-        txid: txid,
-        now: DateTime.now(),
-      );
-      if (changed) await WalletDataStore.save(widget.wallet.address, data);
+      try {
+        final data = await WalletDataStore.load(widget.wallet.address);
+        final changed = data.recordSend(
+          to: addr,
+          amountPradha: pradha,
+          feePradha: result.feePradha,
+          txid: result.txid,
+          now: DateTime.now(),
+        );
+        if (changed) await WalletDataStore.save(widget.wallet.address, data);
+      } catch (_) {
+        // The coins already left. A failed history write must not be shown as
+        // a failed send, or the user retries and pays twice.
+      }
       if (!mounted) return;
       setState(() {
         _sending = false;
         _success = true;
-        _status = S.terkirimTxid(txid);
+        _status = S.terkirimTxid(result.txid, result.feePradha);
         _amountCtrl.clear();
       });
     } catch (e) {
@@ -316,6 +329,13 @@ class _KirimScreenState extends State<KirimScreen> {
                       color: CenTheme.sub, fontWeight: FontWeight.w600),
                 ),
               ),
+              if (_amountPradha > 0 && _amountPradha < _minTransferPradha) ...[
+                const SizedBox(height: 8),
+                Text(
+                  S.minimalKirim,
+                  style: const TextStyle(fontSize: 12, color: CenTheme.red),
+                ),
+              ],
               const SizedBox(height: 18),
               _FeeSummary(
                 feePradha: _feePradha,
@@ -329,7 +349,11 @@ class _KirimScreenState extends State<KirimScreen> {
                 height: 50,
                 child: FilledButton.icon(
                   style: CenTheme.primaryBtn,
-                  onPressed: _sending ? null : _send,
+                  onPressed: (_sending ||
+                          (_amountPradha > 0 &&
+                              _amountPradha < _minTransferPradha))
+                      ? null
+                      : _send,
                   icon: _sending
                       ? const SizedBox(
                           width: 16,

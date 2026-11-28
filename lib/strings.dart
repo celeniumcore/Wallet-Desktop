@@ -171,6 +171,9 @@ class S {
       _t('Alamat tujuan wajib diisi', 'Recipient address is required');
   static String get jumlahTidakValid =>
       _t('Jumlah tidak valid', 'Amount is invalid');
+  static String get minimalKirim => _t(
+      'Minimal kirim 1.000 pradha (0,00001 CEN)',
+      'Minimum transfer is 1,000 pradha (0.00001 CEN)');
   static String get verifikasiGagal => _t(
       'Transaksi dibatalkan: verifikasi tidak berhasil',
       'Transfer cancelled: verification failed');
@@ -482,8 +485,10 @@ class S {
   static String get estimasiFee => _t('Estimasi fee', 'Estimated fee');
   static String get genesis => _t('Genesis', 'Genesis');
   static String get tambahAlamat => _t('Tambah', 'Add');
-  static String terkirimTxid(String txid) =>
-      _t('Terkirim. TXID: $txid', 'Sent. TXID: $txid');
+  static String terkirimTxid(String txid, int feePradha) => _t(
+        'Terkirim. TXID: $txid · biaya $feePradha pradha',
+        'Sent. TXID: $txid · fee $feePradha pradha',
+      );
   static String get keluarAkunJudul =>
       _t('Keluar dari wallet ini?', 'Sign out of this wallet?');
   static String get keluarAkunBody => _t(
